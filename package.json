@@ -1,24 +1,23 @@
 {
-  "name": "@coreui/coreui-free-vue-admin-template",
-  "version": "3.1.4",
-  "description": "Open Source Bootstrap Admin Template",
+  "name": "COvid-19-data-visualization-app",
+  "version": "1.0.0",
+  "description": "This is a demo app to demostrate data visualization",
   "author": {
-    "name": "CoreUI",
-    "url": "https://coreui.io",
-    "github": "https://github.com/coreui",
-    "twitter": "https://twitter.com/core_ui"
+    "name": "Shiftback3",
+    "url": "https://github.com/shiftback3/covid-19-data-visualization-demo/tree/master",
+    "github": "https://github.com/shiftback3/covid-19-data-visualization-demo/tree/master"
   },
   "contributors": [
     {
-      "name": "CoreUI Team",
-      "url": "https://github.com/orgs/coreui/people"
+      "name": "Shiftback3",
+      "url": "https://github.com/shiftback3/covid-19-data-visualization-demo/tree/master"
     }
   ],
   "repository": {
     "type": "git",
-    "url": "git@github.com:coreui/coreui-free-vue-admin-template.git"
+    "url": "https://github.com/shiftback3/covid-19-data-visualization-demo.git"
   },
-  "homepage": "http://coreui.io",
+  "homepage": "",
   "copyright": "Copyright 2021 creativeLabs Łukasz Holeczek",
   "license": "MIT",
   "scripts": {
@@ -41,6 +40,8 @@
     "@fortawesome/free-solid-svg-icons": "^5.15.3",
     "@fortawesome/vue-fontawesome": "^2.0.2",
     "axios": "^0.21.1",
+    "bootstrap": "^5.0.0",
+    "bootstrap-vue": "^2.21.2",
     "vue": "~2.6.12",
     "vue-router": "^3.5.1",
     "vuex": "~3.6.2"

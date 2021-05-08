@@ -7,6 +7,7 @@
 
 <script>
 import { CChartDoughnut } from '@coreui/vue-chartjs'
+import * as Charts from './index.js'
 import axios from "axios";
 // const options = {
 //     method: 'GET',
@@ -19,7 +20,7 @@ import axios from "axios";
 
 export default {
   name: 'CChartDoughnutExample',
-  components: { CChartDoughnut },
+  components: { CChartDoughnut, },
   data(){
     return{
       options:{

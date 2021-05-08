@@ -1,22 +1,17 @@
 <template>
   <div>
+   
    <CRow>
       <CCol sm="12" lg="12">
-        <CWidgetProgress footer="Lorem ipsum dolor sit amet enim.">
-          <div class="h4 m-0 p-3" style="background-color:grey; width:min-content">89.9%</div>
+        <CWidgetProgress footer="">
+          <div class="h4 m-0 p-3" style="background-color:grey; width:min-content; border-radius:5px;">{{covidSatistics["Total Cases_text"]}}</div>
           <div class="card-header-actions">
-            <a 
-              href="https://coreui.io/vue/docs/components/widgets" 
-              class="card-header-action position-absolute"
-              style="right:5px; top:5px"
-              rel="noreferrer noopener" 
-              target="_blank"
-            >
+            
               <!-- <small class="text-muted">docs</small> -->
-            </a>
+            
           </div>
-          <div>Lorem ipsum...</div>
-         
+          <div style="font-size:18px; font-weight:bolder ">Total Cases</div>
+         <div>Last updated: {{covidSatistics['Last Update']}}</div>
         </CWidgetProgress>
       </CCol>
    </CRow>
@@ -25,14 +20,20 @@
       <CCardBody>
         <CRow>
           <CCol sm="5">
-            <h4 id="traffic" class="card-title mb-0">Traffi</h4>
-            <div class="small text-muted">November 2017</div>
+            <h4 id="traffic" class="card-title mb-0">Covid-19 Statistics</h4>
+            <!-- <div class="small text-muted">November 2017</div> -->
           </CCol>
           <CCol sm="7" class="d-none d-md-block">
             
           </CCol>
         </CRow>
-        <MainChartExample style="height:300px;margin-top:40px;"/>
+         <CChartDoughnut
+         
+    :datasets="defaultDatasets"
+    :labels="['Active', 'Recovered', 'Deaths']"
+  />
+        <!-- <CChartDoughnutExample style="height:300px;margin-top:40px;"/> -->
+        <!-- <MainChartExample style="height:300px;margin-top:40px;"/> -->
       </CCardBody>
       
         </CCard>
@@ -44,90 +45,68 @@
 import MainChartExample from './charts/MainChartExample'
 import WidgetsDropdown from './widgets/WidgetsDropdown'
 import WidgetsBrand from './widgets/WidgetsBrand'
+import axios from "axios";
+
+import { CChartDoughnut } from '@coreui/vue-chartjs'
 
 export default {
   name: 'Dashboard',
   components: {
+    CChartDoughnut,
     MainChartExample,
     WidgetsDropdown,
-    WidgetsBrand
+    WidgetsBrand,
+    
   },
   data () {
     return {
-      selected: 'Month',
-      tableItems: [
-        {
-          avatar: { url: 'img/avatars/1.jpg', status: 'success' },
-          user: { name: 'Yiorgos Avraamu', new: true, registered: 'Jan 1, 2015' },
-          country: { name: 'USA', flag: 'cif-us' },
-          usage: { value: 50, period: 'Jun 11, 2015 - Jul 10, 2015' },
-          payment: { name: 'Mastercard', icon: 'cib-cc-mastercard' },
-          activity: '10 sec ago'
-        },
-        {
-          avatar: { url: 'img/avatars/2.jpg', status: 'danger' },
-          user: { name: 'Avram Tarasios', new: false, registered: 'Jan 1, 2015' },
-          country: { name: 'Brazil', flag: 'cif-br' },
-          usage: { value: 22, period: 'Jun 11, 2015 - Jul 10, 2015' },
-          payment: { name: 'Visa', icon: 'cib-cc-visa' },
-          activity: '5 minutes ago'
-        },
-        {
-          avatar: { url: 'img/avatars/3.jpg', status: 'warning' },
-          user: { name: 'Quintin Ed', new: true, registered: 'Jan 1, 2015' },
-          country: { name: 'India', flag: 'cif-in' },
-          usage: { value: 74, period: 'Jun 11, 2015 - Jul 10, 2015' },
-          payment: { name: 'Stripe', icon: 'cib-stripe' },
-          activity: '1 hour ago'
-        },
-        {
-          avatar: { url: 'img/avatars/4.jpg', status: '' },
-          user: { name: 'Enéas Kwadwo', new: true, registered: 'Jan 1, 2015' },
-          country: { name: 'France', flag: 'cif-fr' },
-          usage: { value: 98, period: 'Jun 11, 2015 - Jul 10, 2015' },
-          payment: { name: 'PayPal', icon: 'cib-paypal' },
-          activity: 'Last month'
-        },
-        {
-          avatar: { url: 'img/avatars/5.jpg', status: 'success' },
-          user: { name: 'Agapetus Tadeáš', new: true, registered: 'Jan 1, 2015' },
-          country: { name: 'Spain', flag: 'cif-es' },
-          usage: { value: 22, period: 'Jun 11, 2015 - Jul 10, 2015' },
-          payment: { name: 'Google Wallet', icon: 'cib-google-pay' },
-          activity: 'Last week'
-        },
-        {
-          avatar: { url: 'img/avatars/6.jpg', status: 'danger' },
-          user: { name: 'Friderik Dávid', new: true, registered: 'Jan 1, 2015' },
-          country: { name: 'Poland', flag: 'cif-pl' },
-          usage: { value: 43, period: 'Jun 11, 2015 - Jul 10, 2015' },
-          payment: { name: 'Amex', icon: 'cib-cc-amex' },
-          activity: 'Last week'
-        }
-      ],
-      tableFields: [
-        { key: 'avatar', label: '', _classes: 'text-center' },
-        { key: 'user' },
-        { key: 'country', _classes: 'text-center' },
-        { key: 'usage' },
-        { key: 'payment', label: 'Payment method', _classes: 'text-center' },
-        { key: 'activity' },
-      ]
+      covidSatistics:{},
+        options:{
+    method: 'GET',
+    url: 'https://covid-19-tracking.p.rapidapi.com/v1',
+    headers: {
+      'x-rapidapi-key': '6df9641f29msh997d4891d3c5a38p1e376bjsn45bdd2c9e825',
+      'x-rapidapi-host': 'covid-19-tracking.p.rapidapi.com'
     }
   },
+  data:[],
+      // dataa:[],
+      active:'',
+      recovered:'',
+      deaths:''
+
+    }
+  },
+  created(){
+this.LoadCovidStats()
+  },
   methods: {
-    color (value) {
-      let $color
-      if (value <= 25) {
-        $color = 'info'
-      } else if (value > 25 && value <= 50) {
-        $color = 'success'
-      } else if (value > 50 && value <= 75) {
-        $color = 'warning'
-      } else if (value > 75 && value <= 100) {
-        $color = 'danger'
-      }
-      return $color
+       LoadCovidStats(){
+ axios.request(this.options).then(data => {
+          this.active = data.data[0]["Active Cases_text"].replace(/,/g, "");
+			this.recovered = data.data[0]["Total Recovered_text"].replace(/,/g, "");
+			this.deaths = data.data[0]["Total Deaths_text"].replace(/,/g, "");
+     this.covidSatistics = data.data[0]
+      this.data = [this.active,this.recovered,this.deaths]
+          console.log(this.covidSatistics)
+        })
+        .catch(err => console.error(err));
+  
+     }
+   
+  },
+   computed: {
+    defaultDatasets () {
+      return [
+        {
+          backgroundColor: [
+            "#FFCE51",							
+							"#20D077",
+							"#EF6262"
+          ],
+          data: this.data
+        }
+      ]
     }
   }
 }
