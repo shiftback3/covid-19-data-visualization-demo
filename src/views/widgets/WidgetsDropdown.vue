@@ -12,7 +12,7 @@
             </template>
             <CDropdownItem>Action</CDropdownItem>
             <CDropdownItem>Another action</CDropdownItem>
-            <CDropdownItem>Something else here...</CDropdownItem>
+            <CDropdownItem>Something else now...</CDropdownItem>
             <CDropdownItem disabled>Disabled action</CDropdownItem>
           </CDropdown>
         </template>
