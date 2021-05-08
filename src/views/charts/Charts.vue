@@ -1,68 +1,77 @@
 <template>
-  <div>
-    <CCardGroup columns class="card-columns cols-2">
-      <CCard>
-        <CCardHeader>
-          Line Chart
-          <div class="card-header-actions">
-            <a 
-              href="https://coreui.io/vue/docs/components/charts" 
-              class="card-header-action" 
-              rel="noreferrer noopener" 
-              target="_blank"
-            >
-              <small class="text-muted">docs</small>
-            </a>
-          </div>
-        </CCardHeader>
-        <CCardBody>
-          <CChartLineExample/>
-        </CCardBody>
-      </CCard>
-      <CCard>
-        <CCardHeader>Bar Chart</CCardHeader>
-        <CCardBody><CChartBarExample/></CCardBody>
-      </CCard>
-      <CCard>
-        <CCardHeader>Doughnut Chart</CCardHeader>
-        <CCardBody><CChartDoughnutExample/></CCardBody>
-      </CCard>
-      <CCard>
-        <CCardHeader>Radar Chart</CCardHeader>
-        <CCardBody><CChartRadarExample/></CCardBody>
-      </CCard>
-      <CCard>
-         <CCardHeader>Pie Chart</CCardHeader>
-        <CCardBody><CChartPieExample/></CCardBody>
-      </CCard>
-      <CCard>
-        <CCardHeader>Polar Area Chart</CCardHeader>
-        <CCardBody><CChartPolarAreaExample/></CCardBody>
-      </CCard>
-      <CCard>
-        <CCardHeader>Simple line chart</CCardHeader>
-        <CCardBody>
-          <CChartLineSimple border-color="success" labels="months"/>
-        </CCardBody>        
-      </CCard>
-      <CCard>
-        <CCardHeader>Simple pointed chart</CCardHeader>
-        <CCardBody><CChartLineSimple pointed border-color="warning"/></CCardBody>
-      </CCard>
-      <CCard>
-        <CCardHeader>Simple bar chart</CCardHeader>
-        <CCardBody><CChartBarSimple background-color="danger"/></CCardBody>        
-      </CCard>
-    </CCardGroup>
-  </div>
+  <CChartDoughnut
+    :datasets="defaultDatasets"
+    :labels="['Active', 'Recovered', 'Deaths']"
+  />
 </template>
 
 <script>
-import * as Charts from './index.js'
+import { CChartDoughnut } from '@coreui/vue-chartjs'
+import axios from "axios";
+// const options = {
+//     method: 'GET',
+//     url: 'https://covid-19-tracking.p.rapidapi.com/v1',
+//     headers: {
+//       'x-rapidapi-key': '6df9641f29msh997d4891d3c5a38p1e376bjsn45bdd2c9e825',
+//       'x-rapidapi-host': 'covid-19-tracking.p.rapidapi.com'
+//     }
+//   };
+
 export default {
-  name: 'Charts',
-  components: {
-    ...Charts
+  name: 'CChartDoughnutExample',
+  components: { CChartDoughnut },
+  data(){
+    return{
+      options:{
+    method: 'GET',
+    url: 'https://covid-19-tracking.p.rapidapi.com/v1',
+    headers: {
+      'x-rapidapi-key': '6df9641f29msh997d4891d3c5a38p1e376bjsn45bdd2c9e825',
+      'x-rapidapi-host': 'covid-19-tracking.p.rapidapi.com'
+    }
+  },
+      data:[],
+      // dataa:[],
+      active:'',
+      recovered:'',
+      deaths:''
+    }
+  },
+  created(){
+    this.LoadCovidStats()
+  //  this.data = [6,8,3]
+  },
+  methods:{
+    LoadCovidStats(){
+ axios.request(this.options).then(data => {
+          this.active = data.data[0]["Active Cases_text"].replace(/,/g, "");
+			this.recovered = data.data[0]["Total Recovered_text"].replace(/,/g, "");
+			this.deaths = data.data[0]["Total Deaths_text"].replace(/,/g, "");
+      this.data = [this.active,this.recovered,this.deaths]
+          console.log(this.data)
+        })
+        .catch(err => console.error(err));
+  
+  // this.data = this.active
+   
+// this.data = [60, 20, 80, 10]
+    }
+
+  },
+  computed: {
+    defaultDatasets () {
+      return [
+        {
+          backgroundColor: [
+            '#41B883',
+            '#E46651',
+            '#00D8FF',
+            '#DD1B16'
+          ],
+          data: this.data
+        }
+      ]
+    }
   }
 }
 </script>
